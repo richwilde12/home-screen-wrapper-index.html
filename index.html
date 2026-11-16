@@ -18,8 +18,26 @@
 </style>
 </head>
 <body>
-<!-- Replace YOUR_DEPLOYMENT_ID with the ID from your Apps Script web app URL -->
-<iframe src="https://script.google.com/macros/s/https:/AKfycbylZdGwfx5mdIPfuRa37BVgr7Qlc_ZOtlqSRfN5xPjXeM9OBWRU6Ryn4eZrdC_GbcMpqw/exec"
-        allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+<!-- Replace AKfycbylZdGwfx5mdIPfuRa37BVgr7Qlc_ZOtlqSRfN5xPjXeM9OBWRU6Ryn4eZrdC_GbcMpqw with the ID from your Apps Script web app URL -->
+<iframe id="app" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+<script>
+/* This page remembers which phone this is and who is using it. iPhone can clear the app's own storage inside the
+   frame, but this page's storage is kept, so it hands the phone id and name to the app in the web address. */
+(function () {
+  var BASE = 'https://script.google.com/macros/s/AKfycbylZdGwfx5mdIPfuRa37BVgr7Qlc_ZOtlqSRfN5xPjXeM9OBWRU6Ryn4eZrdC_GbcMpqw/exec', KEY = 'wf_id_v1', s = {};
+  try { s = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { s = {}; }
+  if (!/^[A-Za-z0-9]{3,40}$/.test(s.d || '')) s.d = 'w' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+  save();
+  var f = document.getElementById('app');
+  f.src = BASE + '?wd=' + encodeURIComponent(s.d) + (s.n ? '&wn=' + encodeURIComponent(s.n) : '');
+  window.addEventListener('message', function (ev) {
+    var d = ev.data;
+    if (!d || d.wf !== 'id' || !/(^https:\/\/script\.google\.com$|\.googleusercontent\.com$)/.test(ev.origin)) return;
+    if (typeof d.n === 'string' && d.n && d.n.length <= 40) s.n = d.n;   // the phone id stays as this page made it
+    save();
+  });
+})();
+</script>
 </body>
 </html>
