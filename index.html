@@ -18,7 +18,6 @@
 </style>
 </head>
 <body>
-<!-- Replace AKfycbylZdGwfx5mdIPfuRa37BVgr7Qlc_ZOtlqSRfN5xPjXeM9OBWRU6Ryn4eZrdC_GbcMpqw with the ID from your Apps Script web app URL -->
 <iframe id="app" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
 <script>
 /* This page remembers which phone this is and who is using it. iPhone can clear the app's own storage inside the
@@ -34,7 +33,7 @@
   window.addEventListener('message', function (ev) {
     var d = ev.data;
     if (!d || d.wf !== 'id' || !/(^https:\/\/script\.google\.com$|\.googleusercontent\.com$)/.test(ev.origin)) return;
-    if (typeof d.n === 'string' && d.n && d.n.length <= 40) s.n = d.n;   // the phone id stays as this page made it
+    if (typeof d.n === 'string' && d.n && d.n.length <= 40) s.n = d.n;
     save();
   });
 })();
