@@ -1,7 +1,6 @@
 {
   "name": "WakeFlix",
   "short_name": "WakeFlix",
-  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#000000",
