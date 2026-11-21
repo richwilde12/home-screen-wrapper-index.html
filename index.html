@@ -18,22 +18,28 @@
 </style>
 </head>
 <body>
+<!-- Replace AKfycbylZdGwfx5mdIPfuRa37BVgr7Qlc_ZOtlqSRfN5xPjXeM9OBWRU6Ryn4eZrdC_GbcMpqw with the ID from your Apps Script web app URL -->
 <iframe id="app" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
 <script>
-/* This page remembers which phone this is and who is using it. iPhone can clear the app's own storage inside the
-   frame, but this page's storage is kept, so it hands the phone id and name to the app in the web address. */
+/* This page tells the app who is using it, with no login. Two ways, best first:
+   1. A personal link (this address with ?r=code). The home-screen icon keeps the full address, so it works every launch.
+   2. A name picked once in the app, kept in THIS page's storage (iPhone keeps it; it wipes the app's own storage).
+   Both are passed to the app in its web address, and the server works out the name before the page is built. */
 (function () {
   var BASE = 'https://script.google.com/macros/s/AKfycbylZdGwfx5mdIPfuRa37BVgr7Qlc_ZOtlqSRfN5xPjXeM9OBWRU6Ryn4eZrdC_GbcMpqw/exec', KEY = 'wf_id_v1', s = {};
   try { s = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { s = {}; }
   if (!/^[A-Za-z0-9]{3,40}$/.test(s.d || '')) s.d = 'w' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  // A personal link (…/?r=code) says who this is. The icon keeps that address, and this page keeps the code too.
+  var m = /[?&]r=([A-Za-z0-9]{6,20})(?:&|$)/.exec(location.search);
+  if (m) s.r = m[1].toLowerCase();
   function save() { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
   save();
   var f = document.getElementById('app');
-  f.src = BASE + '?wd=' + encodeURIComponent(s.d) + (s.n ? '&wn=' + encodeURIComponent(s.n) : '');
+  f.src = BASE + '?wd=' + encodeURIComponent(s.d) + (s.r ? '&r=' + encodeURIComponent(s.r) : '') + (s.n ? '&wn=' + encodeURIComponent(s.n) : '');
   window.addEventListener('message', function (ev) {
     var d = ev.data;
     if (!d || d.wf !== 'id' || !/(^https:\/\/script\.google\.com$|\.googleusercontent\.com$)/.test(ev.origin)) return;
-    if (typeof d.n === 'string' && d.n && d.n.length <= 40) s.n = d.n;
+    if (typeof d.n === 'string' && d.n && d.n.length <= 40) s.n = d.n;   // the phone id stays as this page made it
     save();
   });
 })();
